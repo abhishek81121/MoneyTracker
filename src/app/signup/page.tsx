@@ -4,26 +4,9 @@ import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/utils/cn";
-
 import { AuroraBackground } from "@/components/ui/aurora";
-
-import { User } from "@/schema/credentials";
 import { useRouter } from "next/navigation";
-import mongoose from "mongoose";
 import axios from "axios";
-async function handlesignup(
-  firstname: string,
-  lastname: string,
-  email: string,
-  password: string
-) {
-  axios.post("/api/signup", {
-    First_Name: firstname,
-    Last_Name: lastname,
-    Email: email,
-    Password: password,
-  });
-}
 
 export default function SignupFormDemo() {
   const [firstname, setFirstname] = useState("");
@@ -34,7 +17,7 @@ export default function SignupFormDemo() {
   return (
     <>
       <AuroraBackground>
-        <div className=" fixed max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
+        <div className=" z-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
           <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
             Welcome to Expense Manager
           </h2>
@@ -90,11 +73,22 @@ export default function SignupFormDemo() {
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4"></div>
 
           <button
-            onClick={() =>
-              handlesignup(firstname, lastname, email, password).then(() => {
-                router.push("/login");
-              })
-            }
+            onClick={async () => {
+              axios
+                .post("/api/signup", {
+                  First_Name: firstname,
+                  Last_Name: lastname,
+                  Email: email,
+                  Password: password,
+                })
+                .then((response) => {
+                  if (Object.keys(response.data).length == 1) {
+                    router.push("/login");
+                  } else {
+                    window.alert("Check Your Email");
+                  }
+                });
+            }}
             className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
           >
             Sign up &rarr;
